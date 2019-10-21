@@ -134,7 +134,7 @@ class RoleController extends Controller {
    * @param {*} args 
    * @param {*} ret 
    */
-  studentUpdate(args, ret) {
+  async studentUpdate(args, ret) {
     this._authByToken(args, ret)
     this.LOG.info(args.uuid, 'studentUpdate', args)
 
