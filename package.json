@@ -1,0 +1,30 @@
+{
+  "name": "userServiceServer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=dev nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orangeProject2020/userLogicSvr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/orangeProject2020/userLogicSvr/issues"
+  },
+  "homepage": "https://github.com/orangeProject2020/userLogicSvr#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "connect": "^3.7.0",
+    "jayson": "^3.0.2",
+    "log4js": "^4.4.0",
+    "md5": "^2.2.1",
+    "mysql2": "^1.6.5",
+    "request": "^2.88.0",
+    "sequelize": "^5.9.0"
+  }
+}
