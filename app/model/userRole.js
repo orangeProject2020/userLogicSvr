@@ -1,11 +1,11 @@
 const Model = require('./../../lib/model')
 const Sequelize = require('sequelize')
 
-class UserModel extends Model {
+class UserRoleModel extends Model {
 
   model() {
     return this.db().define(
-      'user_auth', {
+      'user_role', {
         id: {
           type: Sequelize.BIGINT,
           primaryKey: true,
@@ -21,37 +21,29 @@ class UserModel extends Model {
         },
         status: {
           type: Sequelize.INTEGER(2),
-          defaultValue: 0
+          defaultValue: 1
         },
         user_id: {
           type: Sequelize.BIGINT(20),
           defaultValue: 0
         },
-        token: {
-          type: Sequelize.STRING(64),
-          defaultValue: ''
+        role_id: {
+          type: Sequelize.BIGINT(11),
+          defaultValue: 0
         },
-        platform: {
-          type: Sequelize.STRING(16),
-          defaultValue: ''
-        },
-        type: {
-          type: Sequelize.STRING(12),
-          defaultValue: ''
-        },
-        device: {
-          type: Sequelize.STRING(32),
-          defaultValue: ''
-        },
+        student_id: {
+          type: Sequelize.BIGINT(20),
+          defaultValue: 0
+        }
       }, {
         timestamps: true,
         createdAt: 'create_time',
         updatedAt: 'update_time',
         freezeTableName: true,
-        tableName: 't_user_auth'
+        tableName: 't_user_role'
       }
     );
   }
 }
 
-module.exports = UserModel
+module.exports = UserRoleModel

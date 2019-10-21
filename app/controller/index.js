@@ -1,7 +1,9 @@
 // 获取所有方法
 const methods = {
   // user: require('./user')
-  auth: require('./auth')
+  auth: require('./auth'),
+  info: require('./info'),
+  role: require('./role')
 }
 
 let METHODS = {}

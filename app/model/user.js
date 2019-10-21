@@ -21,7 +21,7 @@ class UserModel extends Model {
         },
         status: {
           type: Sequelize.INTEGER(2),
-          defaultValue: 1
+          defaultValue: 0
         },
         username: {
           type: Sequelize.STRING(64),
