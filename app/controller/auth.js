@@ -215,12 +215,12 @@ class AuthController extends Controller {
     let type = args.type || 'test'
     let device = args.device || ''
 
-    let userAuthModel = new this.userAuthModel
+    let userAuthModel = new this.MODELS.userAuthModel
     let userAuth = await userAuthModel.model().findOne({
       where: {
         platform: platform,
         type: type,
-        user_id: user_id
+        user_id: userId
       }
     })
     this.LOG.info(args.uuid, '_authTokenByUser|userAuth', userAuth)
@@ -232,7 +232,7 @@ class AuthController extends Controller {
       userAuth = await userAuthModel.model().create({
         platform: platform,
         type: type,
-        user_id: user_id,
+        user_id: userId,
         token: token,
         device: device
       })
