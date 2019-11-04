@@ -1,4 +1,5 @@
 const jayson = require('jayson')
+const config = require('./config')
 
 const jsonParser = require('body-parser').json
 const connect = require('connect')
@@ -11,7 +12,7 @@ const server = jayson.server(methods)
 app.use(jsonParser())
 app.use(server.middleware())
 
-const port = 10001
+const port = config.port || 10001
 app.listen(port, () => {
   console.log('rpc server start at port: ', port)
 });
