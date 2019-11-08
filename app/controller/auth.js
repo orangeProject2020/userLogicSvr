@@ -21,43 +21,43 @@ class AuthController extends Controller {
     let mobile = args.mobile || ''
     let email = args.email || ''
     let openid = args.openid || ''
-    let type = args.type || ''
+    let authType = args.auth_type || args.type || ''
+    let userType = args.user_type || 0
+    let checkPassword = password ? true : (args.check_password ? true : false)
 
     let userModel = new this.MODELS.userModel
+    let whereUser = {}
+    whereUser.type = userType
+
     let user = null
     if (username) {
+      whereUser.username = username
       user = await userModel.model().findOne({
-        where: {
-          username: username
-        }
+        where: whereUser
       })
     }
     if (mobile) {
+      whereUser.mobile = mobile
       user = await userModel.model().findOne({
-        where: {
-          mobile: mobile
-        }
+        where: whereUser
       })
     }
     if (email) {
+      whereUser.email = email
       user = await userModel.model().findOne({
-        where: {
-          email: email
-        }
+        where: whereUser
       })
     }
     if (openid) {
-      if (type == 'wx') {
+      if (authType == 'wx') {
+        whereUser.openid = openid
         user = await userModel.model().findOne({
-          where: {
-            openid: openid
-          }
+          where: whereUser
         })
-      } else if (type == 'mini') {
+      } else if (authType == 'mini') {
+        whereUser.mini_openid = openid
         user = await userModel.model().findOne({
-          where: {
-            mini_openid: mini_openid
-          }
+          where: whereUser
         })
       }
 
@@ -69,19 +69,12 @@ class AuthController extends Controller {
       return ret
     }
 
-    if (username && password) {
-      if (type == 'admin') {
-        if (user.password_admin != md5(password)) {
-          ret.code = 1
-          ret.message = '登录失败:账户密码错误'
-          return ret
-        }
-      } else {
-        if (user.password != md5(password)) {
-          ret.code = 1
-          ret.message = '登录失败:账户密码错误'
-          return ret
-        }
+    if (checkPassword) {
+
+      if (user.password != md5(password)) {
+        ret.code = 1
+        ret.message = '登录失败:账户密码错误'
+        return ret
       }
 
     }
@@ -111,43 +104,42 @@ class AuthController extends Controller {
     let mobile = args.mobile || ''
     let email = args.email || ''
     let openid = args.openid || ''
-    let type = args.type || ''
+    let authType = args.auth_type || args.type || ''
+    let userType = args.user_type || 0
 
     let userModel = new this.MODELS.userModel
     let user = null
+    let whereUser = {}
+    whereUser.type = userType
+
     if (username) {
+      whereUser.username = username
       user = await userModel.model().findOne({
-        where: {
-          username: username
-        }
+        where: whereUser
       })
     }
     if (mobile) {
+      whereUser.mobile = mobile
       user = await userModel.model().findOne({
-        where: {
-          mobile: mobile
-        }
+        where: whereUser
       })
     }
     if (email) {
+      whereUser.email = email
       user = await userModel.model().findOne({
-        where: {
-          email: email
-        }
+        where: whereUser
       })
     }
     if (openid) {
-      if (type == 'wx') {
+      if (authType == 'wx') {
+        whereUser.openid = openid
         user = await userModel.model().findOne({
-          where: {
-            openid: openid
-          }
+          where: whereUser
         })
-      } else if (type == 'mini') {
+      } else if (authType == 'mini') {
+        whereUser.mini_openid = openid
         user = await userModel.model().findOne({
-          where: {
-            mini_openid: mini_openid
-          }
+          where: whereUser
         })
       }
 
@@ -164,21 +156,18 @@ class AuthController extends Controller {
       nickname: args.nickname || '',
       realname: args.realname || '',
       mobile: mobile,
-      email: email
+      email: email,
+      type: userType
     }
     if (openid) {
-      if (type == 'wx') {
+      if (authType == 'wx') {
         userData.openid = openid
       } else if (type == 'mini') {
         userData.mini_openid = openid
       }
     }
     if (password) {
-      if (type == 'admin') {
-        userData.password = md5(password)
-      } else {
-        userData.password = md5(password)
-      }
+      userData.password = md5(password)
     }
     this.LOG.info(args.uuid, 'register|userData', userData)
     user = await userModel.model().create(userData)
@@ -212,21 +201,28 @@ class AuthController extends Controller {
     this.LOG.info(args.uuid, '_authTokenByUser|userId', userId)
 
     let platform = args.platform || 'test'
-    let type = args.type || 'test'
+    let type = args.auth_type || args.type || 'test'
     let device = args.device || ''
+    let ip = args.ip || ''
+
+    let where = {
+      platform: platform,
+      type: type,
+      user_id: userId
+    }
+    if (ip) {
+      // where.ip = ip
+    }
 
     let userAuthModel = new this.MODELS.userAuthModel
     let userAuth = await userAuthModel.model().findOne({
-      where: {
-        platform: platform,
-        type: type,
-        user_id: userId
-      }
+      where: where
     })
     this.LOG.info(args.uuid, '_authTokenByUser|userAuth', userAuth)
     if (userAuth) {
       userAuth.token = token
       userAuth.device = device
+      userAuth.ip = ip
       await userAuth.save()
     } else {
       userAuth = await userAuthModel.model().create({
@@ -234,7 +230,8 @@ class AuthController extends Controller {
         type: type,
         user_id: userId,
         token: token,
-        device: device
+        device: device,
+        ip: ip
       })
     }
     this.LOG.info(args.uuid, '_authTokenByUser|userAuth.id', userAuth.id)

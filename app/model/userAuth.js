@@ -43,6 +43,10 @@ class UserModel extends Model {
           type: Sequelize.STRING(32),
           defaultValue: ''
         },
+        ip: {
+          type: Sequelize.STRING(32),
+          defaultValue: ''
+        }
       }, {
         timestamps: true,
         createdAt: 'create_time',

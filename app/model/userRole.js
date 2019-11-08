@@ -27,13 +27,13 @@ class UserRoleModel extends Model {
           type: Sequelize.BIGINT(20),
           defaultValue: 0
         },
-        role_id: {
+        user_type: {
           type: Sequelize.BIGINT(11),
           defaultValue: 0
         },
-        student_id: {
-          type: Sequelize.BIGINT(20),
-          defaultValue: 0
+        rules: {
+          type: Sequelize.TEXT,
+          defaultValue: ''
         }
       }, {
         timestamps: true,

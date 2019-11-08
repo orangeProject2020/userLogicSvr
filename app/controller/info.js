@@ -22,6 +22,7 @@ class InfoController extends Controller {
     return ret
   }
 
+
 }
 
 module.exports = InfoController

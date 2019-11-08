@@ -70,6 +70,14 @@ class UserModel extends Model {
         password_admin: {
           type: Sequelize.STRING(64),
           defaultValue: ''
+        },
+        type: {
+          type: Sequelize.INTEGER(2),
+          defaultValue: 0
+        },
+        uuid: {
+          type: Sequelize.STRING(64),
+          defaultValue: Sequelize.UUIDV4()
         }
       }, {
         timestamps: true,

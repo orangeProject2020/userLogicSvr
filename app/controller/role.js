@@ -8,163 +8,100 @@ class RoleController extends Controller {
    * @param {*} args 
    * @param {*} ret 
    */
-  async bindGet(args, ret) {
-    this._authByToken(args, ret)
-    this.LOG.info(args.uuid, 'roleBindGet', args)
+  async getInfo(args, ret) {
+    this.LOG.info(args.uuid, 'getInfo', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code) {
+      return authRet
+    }
 
     let userRoleModel = new this.MODELS.userRoleModel
-    let userId = args.user_id
-    this.LOG.info(args.uuid, 'roleBindGet|user_id', userId)
-    let userRole = await userRoleModel.model().findOne({
+    let userModel = new this.MODELS.userModel
+    let user = await userModel.model().findOne({
       where: {
-        user_id: userId,
-        status: 1
+        uuid: args.user_id
       }
     })
-    this.LOG.info(args.uuid, 'roleBindGet|userRole', userRole)
-
-    ret.data = {
-      user_id: userId,
-      role: userRole
+    if (!user) {
+      ret.code = 1
+      ret.message = '无效用户'
+      return ret
     }
-    return ret
-  }
 
-  /**
-   * 设置用户角色
-   * @param {*} args 
-   * @param {*} ret 
-   */
-  async bindSet(args, ret) {
-    this._authByToken(args, ret)
-    this.LOG.info(args.uuid, 'roleBindSet', args)
-
-    let userRoleModel = new this.MODELS.userRoleModel
-    let userId = args.user_id
-    let roleId = args.role_id || 0
-    let studentId = args.student_id || 0
-    this.LOG.info(args.uuid, 'roleBindSet|userId', userId)
-    this.LOG.info(args.uuid, 'roleBindSet|roleId', roleId)
-
-    let userRoles = await userRoleModel.model().findAll({
+    let userId = user.id
+    this.LOG.info(args.uuid, 'getInfo|user_id', userId)
+    let userRole = await userRoleModel.model().findOne({
       where: {
         user_id: userId
       }
     })
-    this.LOG.info(args.uuid, 'roleBindSet|userRoles', userRoles.length)
-
-    if (userRoles.length) {
-      for (let index = 0; index < userRoles.length; index++) {
-        let userRole = userRoles[index];
-        userRole.status = 0
-        await userRole.save()
-      }
-    }
-
-    let userRole = await userRoleModel.model().findOne({
-      where: {
-        user_id: userId,
-        role_id: roleId
-      }
-    })
-    this.LOG.info(args.uuid, 'roleBindSet|userRole', userRoles)
-
-    if (userRole) {
-      userRole.status = 1
-      if (studentId) {
-        userRoleModel.student_id = studentId
-      }
-      await userRole.save()
-    } else {
+    if (!userRole) {
       userRole = await userRoleModel.model().create({
         user_id: userId,
-        role_id: roleId,
-        student_id: student_id,
-        status: 1
+        user_type: user.type
       })
     }
-    this.LOG.info(args.uuid, 'roleBindSet|userRoleId', userRole.id)
-    ret.data = {
-      user_role_id: userRole.id
-    }
+    this.LOG.info(args.uuid, 'getInfoByUserId|userRole', userRole)
 
+    ret.data = userRole
     return ret
   }
 
-
   /**
-   * 获取student信息
+   * 设置用户权限
    * @param {*} args 
    * @param {*} ret 
    */
-  async students(args, ret) {
-    this.LOG.info(args.uuid, 'students', args)
+  async setRules(args, ret) {
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code) {
+      return authRet
+    }
+    this.LOG.info(args.uuid, 'setRules', args)
 
-    let name = args.name || ''
-    let studentNo = args.student_no || ''
+    let userRoleModel = new this.MODELS.userRoleModel
+    let userModel = new this.MODELS.userModel
+    let userId = args.user_id
+    this.LOG.info(args.uuid, 'getInfoByUserId|user_id', userId)
 
-    let where = {}
-    if (name) {
-      where.name = {
-        [Op.like]: '%' + name + '%'
+    let user = await userModel.model().findOne({
+      where: {
+        uuid: userId
       }
-    }
-    if (studentId) {
-      delete where.name
-      where.student_no = studentNo
-    }
-
-    let studentModel = new this.MODELS.studentModel
-    let rows = await studentModel.model().findOne({
-      where: where,
-      limit: 0,
-      offset: 5,
-      order: [
-        ['create_time', 'desc']
-      ]
     })
+    if (!user) {
+      ret.code = 1
+      ret.message = '无效用户'
+      return ret
+    }
 
-    ret.data = rows
-    return ret
-
-  }
-
-  /**
-   * student信息编辑
-   * @param {*} args 
-   * @param {*} ret 
-   */
-  async studentUpdate(args, ret) {
-    this._authByToken(args, ret)
-    this.LOG.info(args.uuid, 'studentUpdate', args)
-
-    let name = args.name
-    let studentNo = args.student_no
-    this.LOG.info(args.uuid, 'studentUpdate|studentNo', studentNo)
-
-    let studentModel = new this.MODELS.studentModel
-    let student = await studentModel.model().findOne({
-      name: name,
-      student_id: studentId
+    userId = user.id
+    let userRole = await userRoleModel.model().findOne({
+      where: {
+        user_id: userId
+      }
     })
-
-
-    if (!student) {
-      student = await studentModel.model().create({
-        name: name,
-        student_no: studentNo,
-        sex: args.sex || 0
+    if (!userRole) {
+      userRole = await userRoleModel.model().create({
+        user_id: userId,
+        user_type: user.type
       })
     }
-    this.LOG.info(args.uuid, 'studentUpdate|studentId', student.id)
+    this.LOG.info(args.uuid, 'getInfoByUserId|userRole', userRole)
 
-    ret.data = {
-      student_id: student.id
+    userRole.rules = args.rules || ''
+    let updateRet = await userRole.save()
+    if (!updateRet) {
+      ret.code = 1
+      ret.message = '设置失败'
+      return ret
     }
 
+    // ret.data = userRole
     return ret
-
   }
+
+
 }
 
 module.exports = RoleController

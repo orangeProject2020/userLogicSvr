@@ -3,7 +3,8 @@ const methods = {
   // user: require('./user')
   auth: require('./auth'),
   info: require('./info'),
-  role: require('./role')
+  role: require('./role'),
+  data: require('./data')
 }
 
 let METHODS = {}
