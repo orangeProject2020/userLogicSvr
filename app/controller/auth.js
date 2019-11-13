@@ -65,15 +65,15 @@ class AuthController extends Controller {
     this.LOG.info(args.uuid, 'login|user', user)
     if (!user) {
       ret.code = 1
-      ret.message = '登录失败'
+      ret.message = ''
       return ret
     }
 
     if (checkPassword) {
-
+      this.LOG.info(args.uuid, 'login|password', md5(password))
       if (user.password != md5(password)) {
         ret.code = 1
-        ret.message = '登录失败:账户密码错误'
+        ret.message = '账户密码错误'
         return ret
       }
 
