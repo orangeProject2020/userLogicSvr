@@ -69,6 +69,7 @@ class AuthController extends Controller {
       return ret
     }
 
+    this.LOG.info(args.uuid, 'login|password', md5(password))
     if (checkPassword) {
       this.LOG.info(args.uuid, 'login|password', md5(password))
       if (user.password != md5(password)) {
