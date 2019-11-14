@@ -139,7 +139,7 @@ class DataController extends Controller {
       return ret
     }
 
-    let updateFileds = ['nickname', 'realname', 'avatar', 'email', 'module', 'sex', 'birth', 'password', 'openid', 'mini_openid']
+    let updateFileds = ['nickname', 'realname', 'avatar', 'email', 'mobile', 'sex', 'birth', 'password', 'openid', 'mini_openid']
     updateFileds.forEach(item => {
       if (args.hasOwnProperty(item)) {
         if (item === 'password') {

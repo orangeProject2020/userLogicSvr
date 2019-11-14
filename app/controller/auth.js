@@ -105,7 +105,8 @@ class AuthController extends Controller {
     let mobile = args.mobile || ''
     let email = args.email || ''
     let openid = args.openid || ''
-    let authType = args.auth_type || args.type || ''
+    let miniOpenid = args.mini_openid || ''
+    // let authType = args.auth_type || args.type || ''
     let userType = args.user_type || 0
 
     let userModel = new this.MODELS.userModel
@@ -113,65 +114,71 @@ class AuthController extends Controller {
     let whereUser = {}
     whereUser.type = userType
 
-    if (username) {
-      whereUser.username = username
-      user = await userModel.model().findOne({
-        where: whereUser
-      })
-    }
-    if (mobile) {
-      whereUser.mobile = mobile
-      user = await userModel.model().findOne({
-        where: whereUser
-      })
-    }
-    if (email) {
-      whereUser.email = email
-      user = await userModel.model().findOne({
-        where: whereUser
-      })
-    }
-    if (openid) {
-      if (authType == 'wx') {
-        whereUser.openid = openid
-        user = await userModel.model().findOne({
-          where: whereUser
-        })
-      } else if (authType == 'mini') {
-        whereUser.mini_openid = openid
-        user = await userModel.model().findOne({
-          where: whereUser
-        })
+    checkFields = (checkFields && checkFields.length) || ['username', 'mobile', 'email', 'openid', ' mini_openid']
+    let checkFieldVal = ''
+    for (let index = 0; index < checkFields.length; index++) {
+      let checkField = checkFields[index];
+      if (args.hasOwnProperty(checkField)) {
+        checkFieldVal = checkField
+        break
       }
-
     }
-    this.LOG.info(args.uuid, 'login|user', user)
-    if (user) {
+    console.log(args.uuid, '_checkUserAssits checkFieldVal:', checkFieldVal)
+    if (checkFieldVal) {
+      whereUser[checkFieldVal] = args[checkFieldVal]
+    } else {
       ret.code = 1
-      ret.message = '请不要重复注册'
+      ret.message = '注册信息字段错误'
       return ret
     }
 
-    let userData = {
-      username: username,
-      nickname: args.nickname || '',
-      realname: args.realname || '',
-      mobile: mobile,
-      email: email,
-      type: userType
-    }
-    if (openid) {
-      if (authType == 'wx') {
-        userData.openid = openid
-      } else if (type == 'mini') {
-        userData.mini_openid = openid
+    user = await userModel.model().findOne({
+      where: whereUser
+    })
+
+    this.LOG.info(args.uuid, 'login|user', user)
+    if (user) {
+      if (openid || miniOpenid) {
+        // 更新openid绑定
+        if (openid) {
+          user.openid = openid
+        }
+        if (miniOpenid) {
+          user.mini_openid = mini_openid
+        }
+
+        let updateRet = await user.save()
+        if (!updateRet) {
+          ret.code = 1
+          ret.message = '修改失败'
+          return ret
+        }
+
+      } else {
+        ret.code = 1
+        ret.message = '请不要重复注册'
+        return ret
       }
+
+    } else {
+      // 添加
+      let userData = {
+        username: username,
+        nickname: args.nickname || '',
+        realname: args.realname || '',
+        mobile: mobile,
+        email: email,
+        type: userType,
+        openid: openid,
+        mini_openid: miniOpenid
+      }
+
+      if (password) {
+        userData.password = md5(password)
+      }
+      this.LOG.info(args.uuid, 'register|userData', userData)
+      user = await userModel.model().create(userData)
     }
-    if (password) {
-      userData.password = md5(password)
-    }
-    this.LOG.info(args.uuid, 'register|userData', userData)
-    user = await userModel.model().create(userData)
 
     args.user_id = user.id
     await this._authTokenByUser(args, ret)
@@ -185,8 +192,59 @@ class AuthController extends Controller {
     return ret
   }
 
-  forgetPassword(args, ret) {
+  async forgetPassword(args, ret) {
+    this.LOG.info(args.uuid, 'forgetPassword', args)
+    // let username = args.username || ''
+    // let password = args.password || ''
+    // let mobile = args.mobile || ''
+    // let email = args.email || ''
+    // let openid = args.openid || ''
+    // let miniOpenid = args.mini_openid || ''
+    // let authType = args.auth_type || args.type || ''
+    let userType = args.user_type || 0
 
+    let userModel = new this.MODELS.userModel
+    let user = null
+    let whereUser = {}
+    whereUser.type = userType
+
+    checkFields = (checkFields && checkFields.length) || ['username', 'mobile', 'email', 'openid', ' mini_openid']
+    let checkFieldVal = ''
+    for (let index = 0; index < checkFields.length; index++) {
+      let checkField = checkFields[index];
+      if (args.hasOwnProperty(checkField)) {
+        checkFieldVal = checkField
+        break
+      }
+    }
+    console.log(args.uuid, 'forgetPassword checkFieldVal:', checkFieldVal)
+    if (checkFieldVal) {
+      whereUser[checkFieldVal] = args[checkFieldVal]
+    } else {
+      ret.code = 1
+      ret.message = '注册信息字段错误'
+      return ret
+    }
+
+    user = await userModel.model().findOne({
+      where: whereUser
+    })
+
+    if (!user) {
+      ret.code = 1
+      ret.message = '无效用户'
+      return ret
+    }
+
+    user.password = md5(args.password)
+    let updateRet = await user.save()
+    if (!updateRet) {
+      ret.code = 1
+      ret.message = '修改失败'
+      return ret
+    }
+
+    return ret
   }
 
   /**
