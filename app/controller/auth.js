@@ -114,7 +114,7 @@ class AuthController extends Controller {
     let whereUser = {}
     whereUser.type = userType
 
-    checkFields = (checkFields && checkFields.length) || ['username', 'mobile', 'email', 'openid', ' mini_openid']
+    let checkFields = ['username', 'mobile', 'email', 'openid', ' mini_openid']
     let checkFieldVal = ''
     for (let index = 0; index < checkFields.length; index++) {
       let checkField = checkFields[index];
@@ -208,7 +208,7 @@ class AuthController extends Controller {
     let whereUser = {}
     whereUser.type = userType
 
-    checkFields = (checkFields && checkFields.length) || ['username', 'mobile', 'email', 'openid', ' mini_openid']
+    let checkFields = ['username', 'mobile', 'email', 'openid', ' mini_openid']
     let checkFieldVal = ''
     for (let index = 0; index < checkFields.length; index++) {
       let checkField = checkFields[index];
