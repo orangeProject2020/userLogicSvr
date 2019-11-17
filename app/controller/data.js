@@ -1,5 +1,6 @@
 const Controller = require('./../../lib/controller')
 const md5 = require('md5')
+const Op = require('sequelize').Op
 
 class DataController extends Controller {
 
@@ -9,8 +10,12 @@ class DataController extends Controller {
    * @param {*} ret 
    */
   async detailGet(args, ret) {
-    this._authByToken(args, ret)
+
     this.LOG.info(args.uuid, 'detailGet', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
 
     let userModel = new this.MODELS.userModel
     let userId = args.user_id
@@ -88,6 +93,10 @@ class DataController extends Controller {
    */
   async createUser(args, ret) {
     this.LOG.info(args.uuid, 'createUser', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
 
     let checkRet = await this._checkUserAssits(args, ret)
     if (checkRet.code) {
@@ -126,6 +135,11 @@ class DataController extends Controller {
    */
   async updateUser(args, ret) {
     this.LOG.info(args.uuid, 'createUser', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
+
     let userModel = new this.MODELS.userModel
     let user = await userModel.model().findOne({
       where: {
@@ -158,6 +172,61 @@ class DataController extends Controller {
 
     return ret
 
+
+  }
+
+  /**
+   * 获取用户数据
+   * @param {*} args 
+   * @param {*} ret 
+   */
+  async list(args, ret) {
+    this.LOG.info(args.uuid, '/list', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
+
+    let page = args.page || 1
+    let limit = args.limit || 0
+    let userModel = new this.MODELS.userModel
+
+    let where = {}
+    let opts = {}
+    if (args.hasOwnProperty('status')) {
+      where.status = args.status
+    } else {
+      where.status = {
+        [Op.gte]: 0
+      }
+    }
+
+    if (args.search) {
+      let search = args.search
+      where[Op.or] = {
+        mobile: search,
+        uuid: search,
+        id: search,
+        realname: search
+      }
+    }
+
+    opts.where = where
+
+    if (limit) {
+      opts.offset = (page - 1) * limit
+      opts.limit = limit
+    }
+
+    opts.order = [
+      ['status', 'asc'],
+      ['create_time', 'desc']
+    ]
+
+    let data = await userModel.model().findAndCountAll(opts)
+    this.LOG.info(args.uuid, '/list data', data)
+    ret.data = data
+    return ret
 
   }
 
