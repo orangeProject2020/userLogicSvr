@@ -1,11 +1,11 @@
 const Model = require('./../../lib/model')
 const Sequelize = require('sequelize')
 
-class UserModel extends Model {
+class StudentModel extends Model {
 
   model() {
     return this.db().define(
-      'user_auth', {
+      'message', {
         id: {
           type: Sequelize.BIGINT,
           primaryKey: true,
@@ -21,42 +21,41 @@ class UserModel extends Model {
         },
         status: {
           type: Sequelize.INTEGER(2),
-          defaultValue: 0
+          defaultValue: 1
+        },
+        type: {
+          type: Sequelize.INTEGER(2),
+          defaultValue: 1
         },
         user_id: {
           type: Sequelize.BIGINT(20),
           defaultValue: 0
         },
-        token: {
-          type: Sequelize.STRING(64),
+        info: {
+          type: Sequelize.STRING(1000),
           defaultValue: ''
         },
-        platform: {
-          type: Sequelize.STRING(16),
+        content: {
+          type: Sequelize.TEXT,
           defaultValue: ''
         },
-        type: {
-          type: Sequelize.STRING(12),
-          defaultValue: ''
+        url: {
+          type: Sequelize.STRING(255),
+          defaultValue: 0
         },
-        device: {
-          type: Sequelize.STRING(32),
-          defaultValue: ''
-        },
-        ip: {
-          type: Sequelize.STRING(32),
-          defaultValue: ''
+        page: {
+          type: Sequelize.STRING(255),
+          defaultValue: 0
         }
       }, {
         timestamps: true,
         createdAt: 'create_time',
         updatedAt: 'update_time',
         freezeTableName: true,
-        tableName: 't_user_auth'
+        tableName: 't_message'
       }
     );
   }
-
 }
 
-module.exports = UserModel
+module.exports = StudentModel

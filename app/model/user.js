@@ -78,6 +78,10 @@ class UserModel extends Model {
         uuid: {
           type: Sequelize.STRING(64),
           defaultValue: Sequelize.UUIDV4()
+        },
+        pid: {
+          type: Sequelize.BIGINT(20),
+          defaultValue: 0
         }
       }, {
         timestamps: true,

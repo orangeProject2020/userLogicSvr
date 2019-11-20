@@ -1,7 +1,6 @@
 const Controller = require('./../../lib/controller')
 const md5 = require('md5')
 const Op = require('sequelize').Op
-
 class DataController extends Controller {
 
   /**
@@ -25,6 +24,46 @@ class DataController extends Controller {
     })
     this.LOG.info(args.uuid, 'detailGet|user', user)
     ret.data = user
+    return ret
+  }
+
+  /**
+   * 获取上级用户信息
+   * @param {*} args 
+   * @param {*} ret 
+   */
+  async getParentUser(args, ret) {
+    this.LOG.info(args.uuid, 'getParentUser', args)
+    let userId = args.user_id || ''
+    if (userId.length < 32) {
+      ret.code = 1;
+      ret.message = 'user id error'
+      return ret
+    }
+    let userModel = new this.MODELS.userModel
+    
+    let user = await userModel.model().findOne({
+      where: {
+        uuid: userId
+      }
+    })
+    if (!user || user.pid == 0){
+      ret.data = null
+      return ret
+    }
+
+    let pUser = await userModel.model().findByPk(user.pid)
+    this.LOG.info(args.uuid, 'getParentUser puser', pUser)
+    if (!pUser){
+      ret.data = null
+      return ret
+    }
+
+    ret.data = {
+      id: pUser.id,
+      user_id: pUser.uuid
+    }
+
     return ret
   }
 

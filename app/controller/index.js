@@ -4,7 +4,8 @@ const methods = {
   auth: require('./auth'),
   info: require('./info'),
   role: require('./role'),
-  data: require('./data')
+  data: require('./data'),
+  message: require('./message')
 }
 
 let METHODS = {}
