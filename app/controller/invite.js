@@ -18,12 +18,12 @@ class InviteController extends Controller {
     let userInviteModel = new this.MODELS.userInviteModel
     let invite = await userInviteModel.model().findOne({
       where: {
-        user_id: args.userId
+        user_id: userId
       }
     })
 
     if (!invite) {
-      let code = (userId + 123456).toSring()
+      let code = (userId + 123456).toString()
       invite = await userInviteModel.model().create({
         user_id: userId,
         code: code
