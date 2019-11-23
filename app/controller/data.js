@@ -21,7 +21,7 @@ class DataController extends Controller {
     let userId = args.user_id
     this.LOG.info(args.uuid, 'detailGet|userId', userId)
     let user = await userModel.model().findByPk(userId, {
-      attributes: ['username', 'nickname', 'realname', 'email', 'mobile', 'sex', 'birth', 'avatar']
+      attributes: ['username', 'nickname', 'realname', 'email', 'mobile', 'sex', 'birth', 'avatar', 'alipay']
     })
     this.LOG.info(args.uuid, 'detailGet|user', user)
     ret.data = user
@@ -153,7 +153,7 @@ class DataController extends Controller {
       return ret
     }
 
-    let updateFileds = ['nickname', 'realname', 'avatar', 'email', 'mobile', 'sex', 'birth', 'password', 'openid', 'mini_openid']
+    let updateFileds = ['nickname', 'realname', 'avatar', 'email', 'mobile', 'sex', 'birth', 'password', 'openid', 'mini_openid', 'alipay']
     updateFileds.forEach(item => {
       if (args.hasOwnProperty(item)) {
         if (item === 'password') {

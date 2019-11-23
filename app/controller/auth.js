@@ -99,7 +99,7 @@ class AuthController extends Controller {
    * @param {*} ret 
    */
   async register(args, ret) {
-    this.LOG.info(args.uuid, 'register', args)
+    this.LOG.info(args.uuid, '/register', args)
     let username = args.username || ''
     let password = args.password || ''
     let mobile = args.mobile || ''
@@ -108,6 +108,25 @@ class AuthController extends Controller {
     let miniOpenid = args.mini_openid || ''
     // let authType = args.auth_type || args.type || ''
     let userType = args.user_type || 0
+
+    // 邀请人
+    let pid = 0
+    let inviteCode = args.invite_code || ''
+    if (inviteCode) {
+      let userInviteModel = new this.MODELS.userInviteModel
+      let invite = await userInviteModel.model().findOne({
+        where: {
+          code: inviteCode
+        }
+      })
+      if (!invite) {
+        ret.code = 1
+        ret.message = 'invite code invild'
+        return ret
+      }
+      this.LOG.info(args.uuid, '/register invite', invite)
+      pid = invite.user_id
+    }
 
     let userModel = new this.MODELS.userModel
     let user = null
@@ -136,7 +155,7 @@ class AuthController extends Controller {
       where: whereUser
     })
 
-    this.LOG.info(args.uuid, 'login|user', user)
+    this.LOG.info(args.uuid, '/register|user', user)
     if (user) {
       if (openid || miniOpenid) {
         // 更新openid绑定
@@ -176,7 +195,7 @@ class AuthController extends Controller {
       if (password) {
         userData.password = md5(password)
       }
-      this.LOG.info(args.uuid, 'register|userData', userData)
+      this.LOG.info(args.uuid, '/register|userData', userData)
       user = await userModel.model().create(userData)
     }
 
@@ -188,7 +207,7 @@ class AuthController extends Controller {
       token: args.token
     }
 
-    this.LOG.info(args.uuid, 'register ret', ret)
+    this.LOG.info(args.uuid, '/register ret', ret)
     return ret
   }
 
