@@ -41,20 +41,20 @@ class DataController extends Controller {
       return ret
     }
     let userModel = new this.MODELS.userModel
-    
+
     let user = await userModel.model().findOne({
       where: {
         uuid: userId
       }
     })
-    if (!user || user.pid == 0){
+    if (!user || user.pid == 0) {
       ret.data = null
       return ret
     }
 
     let pUser = await userModel.model().findByPk(user.pid)
     this.LOG.info(args.uuid, 'getParentUser puser', pUser)
-    if (!pUser){
+    if (!pUser) {
       ret.data = null
       return ret
     }
@@ -265,6 +265,25 @@ class DataController extends Controller {
     let data = await userModel.model().findAndCountAll(opts)
     this.LOG.info(args.uuid, '/list data', data)
     ret.data = data
+    return ret
+
+  }
+
+  async infoApp(args, ret) {
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
+    this.LOG.info(args.uuid, '/infoApp', args)
+    let userId = args.UID
+
+    let userModel = new this.MODELS.userModel
+    let userInfo = await userModel.model().findByPk(userId, {
+      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile', 'alipay', 'sex', 'mobile']
+    })
+    this.LOG.info(args.uuid, '/infoApp userInfo', userInfo)
+
+    ret.data = userInfo
     return ret
 
   }
