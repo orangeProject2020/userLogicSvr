@@ -189,7 +189,8 @@ class AuthController extends Controller {
         email: email,
         type: userType,
         openid: openid,
-        mini_openid: miniOpenid
+        mini_openid: miniOpenid,
+        pid: pid
       }
 
       if (password) {
