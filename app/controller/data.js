@@ -173,7 +173,7 @@ class DataController extends Controller {
    * @param {*} ret 
    */
   async updateUser(args, ret) {
-    this.LOG.info(args.uuid, 'createUser', args)
+    this.LOG.info(args.uuid, 'updateUser', args)
     let authRet = await this._authByToken(args, ret)
     if (authRet.code != 0) {
       return authRet
