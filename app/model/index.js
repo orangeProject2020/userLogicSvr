@@ -4,5 +4,6 @@ module.exports = {
   userRoleModel: require('./userRole'),
   userInviteModel: require('./userInvite'),
   // studentModel: require('./student')
-  messageModel: require('./message')
+  messageModel: require('./message'),
+  addressModel: require('./address')
 }

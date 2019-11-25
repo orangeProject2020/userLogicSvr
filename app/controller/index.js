@@ -6,7 +6,8 @@ const methods = {
   role: require('./role'),
   data: require('./data'),
   invite: require('./invite'),
-  message: require('./message')
+  message: require('./message'),
+  address: require('./address')
 }
 
 let METHODS = {}
