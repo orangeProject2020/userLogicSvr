@@ -35,7 +35,7 @@ class AddressController extends Controller {
 
     opts.order = [
       ['is_default', 'desc'],
-      ['create_time', 'desc']
+      ['update_time', 'desc']
     ]
 
     let data = await addressModel.model().findAndCountAll(opts)
@@ -58,7 +58,7 @@ class AddressController extends Controller {
       data.isDefault = item.is_default
       list.push(data)
     })
-    
+
     ret.data = {
       rows: list,
       count: count
@@ -93,7 +93,7 @@ class AddressController extends Controller {
       data.is_default = args.isDefault
 
       let updateRet = await data.save()
-      if(!updateRet) {
+      if (!updateRet) {
         ret.code = 1
         ret.message = '保存失败'
         return ret
@@ -101,7 +101,9 @@ class AddressController extends Controller {
     } else {
       let userId = args.UID
       let count = await addressModel.model().count({
-        where: {user_id: userId}
+        where: {
+          user_id: userId
+        }
       })
 
       if (count >= 5) {
@@ -123,7 +125,7 @@ class AddressController extends Controller {
       data.user_id = userId
 
       let createRet = await addressModel.model().create(data)
-      if(!createRet) {
+      if (!createRet) {
         ret.code = 1
         ret.message = '添加失败'
         return ret
@@ -144,15 +146,15 @@ class AddressController extends Controller {
 
     if (args.id) {
       let data = await addressModel.model().findByPk(args.id)
-      
-      if (data.user_id != args.UID){
+
+      if (data.user_id != args.UID) {
         ret.code = 1
         ret.message = '删除错误'
         return ret
       }
 
       await data.destroy()
-    } 
+    }
 
     return ret
   }

@@ -279,13 +279,45 @@ class DataController extends Controller {
 
     let userModel = new this.MODELS.userModel
     let userInfo = await userModel.model().findByPk(userId, {
-      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile', 'alipay', 'sex', 'mobile']
+      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile', 'alipay', 'sex']
     })
     this.LOG.info(args.uuid, '/infoApp userInfo', userInfo)
 
     ret.data = userInfo
     return ret
 
+  }
+
+  async getUserIdByMobile(args, ret) {
+    this.LOG.info(args.uuid, '/getUserIdByMobile', args)
+    let mobile = args.mobile
+
+    let userModel = new this.MODELS.userModel
+    let userInfo = await userModel.model().findOne({
+      where: {
+        mobile: mobile
+      },
+      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile']
+    })
+
+    ret.data = userInfo
+    return ret
+  }
+
+  async getListByUserIds(args, ret) {
+    let userIds = args.user_ids
+
+    let userModel = new this.MODELS.userModel
+    let userList = await userModel.model().findAll({
+      where: {
+        uuid: {
+          [Op.in]: userIds
+        }
+      },
+      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile']
+    })
+
+    ret.data = userList
   }
 
 
