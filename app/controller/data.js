@@ -314,7 +314,7 @@ class DataController extends Controller {
           [Op.in]: userIds
         }
       },
-      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile']
+      attributes: ['id', 'uuid', 'avatar', 'username', 'mobile', 'alipay']
     })
 
     ret.data = userList

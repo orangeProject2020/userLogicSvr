@@ -86,6 +86,7 @@ class AuthController extends Controller {
 
     ret.data = {
       user_id: user.id,
+      uuid: user.uuid,
       token: args.token
     }
 
@@ -205,6 +206,7 @@ class AuthController extends Controller {
 
     ret.data = {
       user_id: user.id,
+      uid: user.uuid,
       token: args.token
     }
 
