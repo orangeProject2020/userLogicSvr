@@ -7,7 +7,8 @@ const methods = {
   data: require('./data'),
   invite: require('./invite'),
   message: require('./message'),
-  address: require('./address')
+  address: require('./address'),
+  notice: require('./notice')
 }
 
 let METHODS = {}

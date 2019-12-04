@@ -1,11 +1,11 @@
 const Model = require('./../../lib/model')
 const Sequelize = require('sequelize')
 
-class StudentModel extends Model {
+class NoticeModel extends Model {
 
   model() {
     return this.db().define(
-      'message', {
+      'notice', {
         id: {
           type: Sequelize.BIGINT,
           primaryKey: true,
@@ -23,14 +23,7 @@ class StudentModel extends Model {
           type: Sequelize.INTEGER(2),
           defaultValue: 0
         },
-        type: {
-          type: Sequelize.INTEGER(2),
-          defaultValue: 0
-        },
-        user_id: {
-          type: Sequelize.BIGINT(20),
-          defaultValue: 0
-        },
+
         info: {
           type: Sequelize.STRING(1000),
           defaultValue: ''
@@ -39,27 +32,23 @@ class StudentModel extends Model {
           type: Sequelize.TEXT,
           defaultValue: ''
         },
-        url: {
+        title: {
           type: Sequelize.STRING(255),
           defaultValue: ''
         },
-        page: {
+        cover: {
           type: Sequelize.STRING(255),
           defaultValue: ''
-        },
-        notice_id: {
-          type: Sequelize.BIGINT(20),
-          defaultValue: 0
         }
       }, {
         timestamps: true,
         createdAt: 'create_time',
         updatedAt: 'update_time',
         freezeTableName: true,
-        tableName: 't_message'
+        tableName: 't_notice'
       }
     );
   }
 }
 
-module.exports = StudentModel
+module.exports = NoticeModel

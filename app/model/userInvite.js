@@ -29,7 +29,7 @@ class UserRoleModel extends Model {
         },
         code: {
           type: Sequelize.STRING(8),
-          defaultValue: 0
+          defaultValue: ''
         }
       }, {
         timestamps: true,
