@@ -18,7 +18,7 @@ class NoticeController extends Controller {
       opts.limit = limit
     }
 
-    if (args.ids && args.ids.length) {
+    if (args.hasOwnProperty('ids') && args.ids.length) {
       where.id = {
         [Op.in]: args.ids
       }

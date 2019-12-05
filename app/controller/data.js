@@ -250,6 +250,12 @@ class DataController extends Controller {
       }
     }
 
+    if (args.hasOwnProperty('ids') && args.ids.length > 0) {
+      where.id = {
+        [Op.in]: args.ids
+      }
+    }
+
     opts.where = where
 
     if (limit) {
