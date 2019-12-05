@@ -24,6 +24,7 @@ class NoticeController extends Controller {
       }
     }
 
+    opts.where = where
     opts.order = [
       ['create_time', 'desc']
     ]

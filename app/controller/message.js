@@ -4,6 +4,35 @@ const Op = require('sequelize').Op
 
 class MessageController extends Controller {
 
+  async listUser(args, ret) {
+
+    this.LOG.info(args.uuid, '/listUser', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code) {
+      return authRet
+    }
+
+    let noticeModel = new this.MODELS.noticeModel
+    let listRet = await this.list(args, ret)
+    let rows = []
+    for (let index = 0; index < listRet.data.rows.length; index++) {
+      let row = listRet.data.rows[index]
+      let noticeId = row.notice_id
+      if (noticeId) {
+        let notice = await noticeModel.model().findByPk(noticeId)
+        row.dataValues.notice = notice || null
+        row.dataValues.info = notice ? notice.title : ''
+      } else {
+        row.dataValues.notice = null
+      }
+
+      rows.push(row)
+    }
+
+    listRet.data.rows = rows
+    return listRet
+  }
+
   async list(args, ret) {
     this.LOG.info(args.uuid, '/list', args)
     let messageModel = new this.MODELS.messageModel
@@ -18,10 +47,14 @@ class MessageController extends Controller {
       opts.limit = limit
     }
 
+    if (args.hasOwnProperty('status')) {
+      where.status = args.status
+    }
+
     if (args.UID) {
       where.user_id = args.UID
     }
-
+    opts.where = where
     opts.order = [
       ['create_time', 'desc']
     ]
@@ -72,10 +105,10 @@ class MessageController extends Controller {
     if (authRet.code != 0) {
       return authRet
     }
-    let userId = args.UID
+    // let userId = args.UID
 
     let messageModel = new this.MODELS.messageModel
-    let message = await messageModel.model.findByPk(args.id)
+    let message = await messageModel.model().findByPk(args.id)
     if (!message) {
       ret.code = 1
       ret.message = '无效数据'
