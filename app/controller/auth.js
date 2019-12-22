@@ -109,6 +109,18 @@ class AuthController extends Controller {
     let miniOpenid = args.mini_openid || ''
     // let authType = args.auth_type || args.type || ''
     let userType = args.user_type || 0
+    let verfiyCode = args.verfiy_code || ''
+    if (mobile && !verfiyCode) {
+      ret.code = 1
+      ret.message = 'verify code error'
+      return ret
+    } else if (mobile && verfiyCode) {
+      let verfiyCodeCheckRet = await this.API.checkVerifyCode(args)
+      if (verfiyCodeCheckRet.code) {
+        return verfiyCodeCheckRet
+      }
+    }
+
 
     // 邀请人
     let pid = 0
