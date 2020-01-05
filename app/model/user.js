@@ -49,15 +49,15 @@ class UserModel extends Model {
         },
         avatar: {
           type: Sequelize.STRING(255),
-          defaultValue: 0
+          defaultValue: ''
         },
         openid: {
           type: Sequelize.STRING(64),
-          defaultValue: 0
+          defaultValue: ''
         },
         mini_openid: {
           type: Sequelize.STRING(64),
-          defaultValue: 0
+          defaultValue: ''
         },
         birth: {
           type: Sequelize.BIGINT(11),
