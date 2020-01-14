@@ -130,6 +130,29 @@ class MessageController extends Controller {
 
     return ret
   }
+
+  async noReadCount(args, ret) {
+    this.LOG.info(args.uuid, '/noReadCount', args)
+    let authRet = await this._authByToken(args, ret)
+    if (authRet.code != 0) {
+      return authRet
+    }
+
+    let userId = args.UID
+    let messageModel = new this.MODELS.messageModel
+    let count = await messageModel.model().count({
+      where: {
+        user_id: userId,
+        status: 0
+      }
+    })
+
+    ret.data = {
+      count: count
+    }
+    this.LOG.info(args.uuid, '/noReadCount ret', ret)
+    return ret
+  }
 }
 
 module.exports = MessageController
